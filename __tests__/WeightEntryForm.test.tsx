@@ -22,7 +22,7 @@ describe("WeightEntryForm — 유효성 검사", () => {
       target: { value: "4.2" },
     });
     fireEvent.submit(screen.getByRole("button", { name: "기록" }).closest("form")!);
-    expect(onSubmit).toHaveBeenCalledWith(4.2, expect.any(String));
+    expect(onSubmit).toHaveBeenCalledWith(4.2, expect.any(String), undefined);
   });
 
   it("수정 모드에서 기존 값이 채워짐", () => {

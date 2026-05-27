@@ -10,8 +10,8 @@ type CatStore = {
   addCat: (name: string, targetWeight?: number, activityLevel?: ActivityLevel) => void;
   updateCat: (id: string, name: string, targetWeight?: number, activityLevel?: ActivityLevel) => void;
   deleteCat: (id: string) => void;
-  addWeightEntry: (catId: string, weight: number, date: string) => void;
-  updateWeightEntry: (id: string, weight: number, date: string) => void;
+  addWeightEntry: (catId: string, weight: number, date: string, memo?: string) => void;
+  updateWeightEntry: (id: string, weight: number, date: string, memo?: string) => void;
   deleteWeightEntry: (id: string) => void;
 };
 
@@ -56,7 +56,7 @@ export const useCatStore = create<CatStore>()(
           entries: s.entries.filter((e) => e.catId !== id),
         })),
 
-      addWeightEntry: (catId, weight, date) =>
+      addWeightEntry: (catId, weight, date, memo) =>
         set((s) => ({
           entries: [
             ...s.entries,
@@ -65,16 +65,17 @@ export const useCatStore = create<CatStore>()(
               catId,
               weight: Math.round(weight * 10) / 10,
               date,
+              memo: memo?.trim() || undefined,
               createdAt: new Date().toISOString(),
             },
           ],
         })),
 
-      updateWeightEntry: (id, weight, date) =>
+      updateWeightEntry: (id, weight, date, memo) =>
         set((s) => ({
           entries: s.entries.map((e) =>
             e.id === id
-              ? { ...e, weight: Math.round(weight * 10) / 10, date }
+              ? { ...e, weight: Math.round(weight * 10) / 10, date, memo: memo?.trim() || undefined }
               : e
           ),
         })),

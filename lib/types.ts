@@ -37,5 +37,6 @@ export type WeightEntry = {
   catId: string;
   weight: number;
   date: string;
+  memo?: string;
   createdAt: string;
 };

@@ -5,9 +5,11 @@ import type { WeightEntry } from "@/lib/types";
 
 type Props = {
   initial?: WeightEntry;
-  onSubmit: (weight: number, date: string) => void;
+  onSubmit: (weight: number, date: string, memo?: string) => void;
   onCancel: () => void;
 };
+
+const INPUT_CLS = "w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300";
 
 function today() {
   return new Date().toISOString().slice(0, 10);
@@ -16,12 +18,13 @@ function today() {
 export default function WeightEntryForm({ initial, onSubmit, onCancel }: Props) {
   const [weight, setWeight] = useState(initial?.weight?.toString() ?? "");
   const [date, setDate] = useState(initial?.date ?? today());
+  const [memo, setMemo] = useState(initial?.memo ?? "");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const w = parseFloat(weight);
     if (!w || w <= 0) return;
-    onSubmit(w, date);
+    onSubmit(w, date, memo || undefined);
   };
 
   return (
@@ -32,7 +35,7 @@ export default function WeightEntryForm({ initial, onSubmit, onCancel }: Props) 
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className={INPUT_CLS}
           required
         />
       </div>
@@ -47,8 +50,21 @@ export default function WeightEntryForm({ initial, onSubmit, onCancel }: Props) 
           placeholder="예: 4.2"
           step="0.1"
           min="0.1"
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className={INPUT_CLS}
           required
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          메모 (선택)
+        </label>
+        <textarea
+          value={memo}
+          onChange={(e) => setMemo(e.target.value)}
+          placeholder="예: 병원 방문 후, 식욕 감소"
+          rows={2}
+          maxLength={100}
+          className={`${INPUT_CLS} resize-none`}
         />
       </div>
       <div className="flex gap-2 pt-2">

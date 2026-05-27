@@ -10,6 +10,7 @@ import Modal from "@/components/Modal";
 import type { WeightEntry } from "@/lib/types";
 import { ACTIVITY_LABELS } from "@/lib/types";
 import { calcRER, calcDailyCalories } from "@/lib/calories";
+import { getWeightWarning } from "@/lib/weightWarning";
 
 export default function CatDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ export default function CatDetailPage() {
     );
 
   const latestWeight = catEntries[0]?.weight;
+  const weightWarning = getWeightWarning(catEntries);
   const rer = latestWeight ? calcRER(latestWeight) : null;
   const dailyCalories =
     latestWeight && cat?.activityLevel
@@ -63,6 +65,22 @@ export default function CatDetailPage() {
           + 기록
         </button>
       </div>
+
+      {weightWarning && (
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl px-5 py-4 mb-4">
+          <p className="text-sm font-semibold text-amber-700 mb-1">
+            ⚠️ 체중 급변 감지
+          </p>
+          <p className="text-sm text-amber-600">
+            {weightWarning.days}일 만에{" "}
+            <span className="font-semibold">
+              {weightWarning.from} kg → {weightWarning.to} kg
+            </span>{" "}
+            ({weightWarning.percent > 0 ? "+" : ""}
+            {weightWarning.percent.toFixed(1)}%). 수의사 상담을 권장합니다.
+          </p>
+        </div>
+      )}
 
       {/* 권장 섭취 칼로리 */}
       {rer !== null && (
@@ -116,7 +134,7 @@ export default function CatDetailPage() {
                 key={entry.id}
                 className="bg-white rounded-2xl border border-pink-100 px-5 py-4 flex items-center justify-between shadow-sm"
               >
-                <div>
+                <div className="flex-1 min-w-0">
                   <p className="text-sm text-gray-400">{entry.date}</p>
                   <div className="flex items-end gap-2 mt-0.5">
                     <span className="text-xl font-bold text-pink-500">
@@ -135,6 +153,9 @@ export default function CatDetailPage() {
                       </div>
                     )}
                   </div>
+                  {entry.memo && (
+                    <p className="text-xs text-gray-500 mt-1 truncate">{entry.memo}</p>
+                  )}
                 </div>
                 <div className="flex gap-1">
                   <button
@@ -159,8 +180,8 @@ export default function CatDetailPage() {
       {showAdd && (
         <Modal title="체중 기록" onClose={() => setShowAdd(false)}>
           <WeightEntryForm
-            onSubmit={(weight, date) => {
-              addWeightEntry(id, weight, date);
+            onSubmit={(weight, date, memo) => {
+              addWeightEntry(id, weight, date, memo);
               setShowAdd(false);
             }}
             onCancel={() => setShowAdd(false)}
@@ -172,8 +193,8 @@ export default function CatDetailPage() {
         <Modal title="체중 수정" onClose={() => setEditing(null)}>
           <WeightEntryForm
             initial={editing}
-            onSubmit={(weight, date) => {
-              updateWeightEntry(editing.id, weight, date);
+            onSubmit={(weight, date, memo) => {
+              updateWeightEntry(editing.id, weight, date, memo);
               setEditing(null);
             }}
             onCancel={() => setEditing(null)}
