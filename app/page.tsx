@@ -51,8 +51,8 @@ export default function Home() {
       {showAdd && (
         <Modal title="고양이 추가" onClose={() => setShowAdd(false)}>
           <CatForm
-            onSubmit={(name, targetWeight) => {
-              addCat(name, targetWeight);
+            onSubmit={(name, targetWeight, activityLevel) => {
+              addCat(name, targetWeight, activityLevel);
               setShowAdd(false);
             }}
             onCancel={() => setShowAdd(false)}
@@ -64,8 +64,8 @@ export default function Home() {
         <Modal title="고양이 수정" onClose={() => setEditing(null)}>
           <CatForm
             initial={editing}
-            onSubmit={(name, targetWeight) => {
-              updateCat(editing.id, name, targetWeight);
+            onSubmit={(name, targetWeight, activityLevel) => {
+              updateCat(editing.id, name, targetWeight, activityLevel);
               setEditing(null);
             }}
             onCancel={() => setEditing(null)}

@@ -8,6 +8,8 @@ import WeightChart from "@/components/WeightChart";
 import WeightEntryForm from "@/components/WeightEntryForm";
 import Modal from "@/components/Modal";
 import type { WeightEntry } from "@/lib/types";
+import { ACTIVITY_LABELS } from "@/lib/types";
+import { calcRER, calcDailyCalories } from "@/lib/calories";
 
 export default function CatDetailPage() {
   const { id } = useParams<{ id: string }>();
@@ -23,6 +25,13 @@ export default function CatDetailPage() {
         new Date(b.date).getTime() - new Date(a.date).getTime() ||
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
     );
+
+  const latestWeight = catEntries[0]?.weight;
+  const rer = latestWeight ? calcRER(latestWeight) : null;
+  const dailyCalories =
+    latestWeight && cat?.activityLevel
+      ? calcDailyCalories(latestWeight, cat.activityLevel)
+      : null;
 
   const [showAdd, setShowAdd] = useState(false);
   const [editing, setEditing] = useState<WeightEntry | null>(null);
@@ -54,6 +63,40 @@ export default function CatDetailPage() {
           + 기록
         </button>
       </div>
+
+      {/* 권장 섭취 칼로리 */}
+      {rer !== null && (
+        <div className="bg-white rounded-2xl shadow-sm border border-pink-100 p-5 mb-4">
+          <p className="text-xs font-semibold text-pink-400 uppercase tracking-wide mb-3">
+            🔥 권장 섭취 칼로리
+          </p>
+          <div className="flex gap-3">
+            <div className="flex-1 bg-pink-50 rounded-xl p-3 text-center">
+              <p className="text-xs text-gray-500 mb-1">기초대사량 (RER)</p>
+              <p className="text-xl font-bold text-gray-800">{rer}</p>
+              <p className="text-xs text-gray-400">kcal/일</p>
+            </div>
+            {dailyCalories !== null ? (
+              <div className="flex-1 bg-pink-100 rounded-xl p-3 text-center">
+                <p className="text-xs text-gray-500 mb-1">
+                  {ACTIVITY_LABELS[cat.activityLevel!]}
+                </p>
+                <p className="text-xl font-bold text-pink-600">{dailyCalories}</p>
+                <p className="text-xs text-gray-400">kcal/일</p>
+              </div>
+            ) : (
+              <div className="flex-1 bg-gray-50 rounded-xl p-3 text-center flex items-center justify-center">
+                <p className="text-xs text-gray-400 leading-relaxed">
+                  고양이 정보에서<br />활동 수준을<br />설정해보세요
+                </p>
+              </div>
+            )}
+          </div>
+          <p className="text-[10px] text-gray-400 mt-3">
+            * 현재 체중 {latestWeight} kg 기준 · RER = 70 × 체중^0.75
+          </p>
+        </div>
+      )}
 
       <div className="bg-white rounded-2xl shadow-sm border border-pink-100 p-5 mb-6">
         <WeightChart entries={catEntries} targetWeight={cat.targetWeight} />

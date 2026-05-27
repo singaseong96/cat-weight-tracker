@@ -1,25 +1,36 @@
 "use client";
 
 import { useState } from "react";
-import type { Cat } from "@/lib/types";
+import type { ActivityLevel, Cat } from "@/lib/types";
+import { ACTIVITY_LABELS } from "@/lib/types";
 
 type Props = {
   initial?: Cat;
-  onSubmit: (name: string, targetWeight?: number) => void;
+  onSubmit: (name: string, targetWeight?: number, activityLevel?: ActivityLevel) => void;
   onCancel: () => void;
 };
+
+const INPUT_CLS =
+  "w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300";
 
 export default function CatForm({ initial, onSubmit, onCancel }: Props) {
   const [name, setName] = useState(initial?.name ?? "");
   const [targetWeight, setTargetWeight] = useState(
     initial?.targetWeight?.toString() ?? ""
   );
+  const [activityLevel, setActivityLevel] = useState<ActivityLevel | "">(
+    initial?.activityLevel ?? ""
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return;
     const tw = targetWeight ? parseFloat(targetWeight) : undefined;
-    onSubmit(name.trim(), tw && tw > 0 ? Math.round(tw * 10) / 10 : undefined);
+    onSubmit(
+      name.trim(),
+      tw && tw > 0 ? Math.round(tw * 10) / 10 : undefined,
+      activityLevel || undefined
+    );
   };
 
   return (
@@ -33,10 +44,11 @@ export default function CatForm({ initial, onSubmit, onCancel }: Props) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="예: 나비"
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className={INPUT_CLS}
           required
         />
       </div>
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-1">
           목표 체중 (kg, 선택)
@@ -48,9 +60,30 @@ export default function CatForm({ initial, onSubmit, onCancel }: Props) {
           placeholder="예: 4.5"
           step="0.1"
           min="0.1"
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className={INPUT_CLS}
         />
       </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          생애단계 / 활동 수준 (선택)
+        </label>
+        <select
+          value={activityLevel}
+          onChange={(e) => setActivityLevel(e.target.value as ActivityLevel | "")}
+          className={INPUT_CLS}
+        >
+          <option value="">선택 안함</option>
+          {(Object.entries(ACTIVITY_LABELS) as [ActivityLevel, string][]).map(
+            ([key, label]) => (
+              <option key={key} value={key}>
+                {label}
+              </option>
+            )
+          )}
+        </select>
+      </div>
+
       <div className="flex gap-2 pt-2">
         <button
           type="submit"

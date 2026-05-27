@@ -2,13 +2,13 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { Cat, WeightEntry } from "@/lib/types";
+import type { ActivityLevel, Cat, WeightEntry } from "@/lib/types";
 
 type CatStore = {
   cats: Cat[];
   entries: WeightEntry[];
-  addCat: (name: string, targetWeight?: number) => void;
-  updateCat: (id: string, name: string, targetWeight?: number) => void;
+  addCat: (name: string, targetWeight?: number, activityLevel?: ActivityLevel) => void;
+  updateCat: (id: string, name: string, targetWeight?: number, activityLevel?: ActivityLevel) => void;
   deleteCat: (id: string) => void;
   addWeightEntry: (catId: string, weight: number, date: string) => void;
   updateWeightEntry: (id: string, weight: number, date: string) => void;
@@ -29,7 +29,7 @@ export const useCatStore = create<CatStore>()(
       cats: [],
       entries: [],
 
-      addCat: (name, targetWeight) =>
+      addCat: (name, targetWeight, activityLevel) =>
         set((s) => ({
           cats: [
             ...s.cats,
@@ -37,15 +37,16 @@ export const useCatStore = create<CatStore>()(
               id: crypto.randomUUID(),
               name,
               targetWeight,
+              activityLevel,
               createdAt: new Date().toISOString(),
             },
           ],
         })),
 
-      updateCat: (id, name, targetWeight) =>
+      updateCat: (id, name, targetWeight, activityLevel) =>
         set((s) => ({
           cats: s.cats.map((c) =>
-            c.id === id ? { ...c, name, targetWeight } : c
+            c.id === id ? { ...c, name, targetWeight, activityLevel } : c
           ),
         })),
 
