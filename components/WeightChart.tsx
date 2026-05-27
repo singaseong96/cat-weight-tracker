@@ -56,7 +56,10 @@ export default function WeightChart({ entries, targetWeight }: Props) {
           <XAxis dataKey="date" tick={{ fontSize: 11, fill: "#9ca3af" }} />
           <YAxis
             tick={{ fontSize: 11, fill: "#9ca3af" }}
-            domain={["auto", "auto"]}
+            domain={[
+              (dataMin: number) => Math.min(dataMin, targetWeight ?? dataMin),
+              (dataMax: number) => Math.max(dataMax, targetWeight ?? dataMax),
+            ]}
           />
           <Tooltip
             formatter={(v) => [`${v} kg`, "체중"]}
