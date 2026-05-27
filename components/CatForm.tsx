@@ -33,7 +33,7 @@ export default function CatForm({ initial, onSubmit, onCancel }: Props) {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="예: 나비"
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
           required
         />
       </div>
@@ -48,7 +48,7 @@ export default function CatForm({ initial, onSubmit, onCancel }: Props) {
           placeholder="예: 4.5"
           step="0.1"
           min="0.1"
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
         />
       </div>
       <div className="flex gap-2 pt-2">

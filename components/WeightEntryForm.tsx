@@ -32,7 +32,7 @@ export default function WeightEntryForm({ initial, onSubmit, onCancel }: Props) 
           type="date"
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
           required
         />
       </div>
@@ -47,7 +47,7 @@ export default function WeightEntryForm({ initial, onSubmit, onCancel }: Props) 
           placeholder="예: 4.2"
           step="0.1"
           min="0.1"
-          className="w-full rounded-xl border border-pink-200 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-pink-300"
+          className="w-full rounded-xl border border-pink-200 px-4 py-2 text-gray-800 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-300"
           required
         />
       </div>
