@@ -60,20 +60,30 @@
 
 ```typescript
 type Cat = {
-  id: string;
+  id: string; // crypto.randomUUID()
   name: string;
-  targetWeight?: number; // kg
-  createdAt: string; // ISO date
+  targetWeight?: number; // kg, 소수점 1자리
+  createdAt: string; // ISO datetime
 };
 
 type WeightEntry = {
-  id: string;
+  id: string; // crypto.randomUUID()
   catId: string;
-  weight: number; // kg
-  date: string; // ISO date (YYYY-MM-DD)
-  createdAt: string;
+  weight: number; // kg, 소수점 1자리 (0.1 단위)
+  date: string; // YYYY-MM-DD, 같은 날 복수 기록 허용
+  createdAt: string; // ISO datetime (정렬 tiebreaker)
 };
 ```
+
+### 결정 사항
+
+- **ID 생성**: `crypto.randomUUID()` 사용. 외부 의존성 없음.
+- **소수점 정밀도**: 체중 0.1 kg 단위. 폼 입력 `step="0.1"`, 저장 전 `Math.round(v * 10) / 10`.
+- **날짜 중복**: 같은 날 복수 기록 허용. 목록은 `date` DESC → `createdAt` DESC 정렬.
+- **Cascade 삭제**: 고양이 삭제 시 해당 `catId`의 모든 `WeightEntry` 함께 삭제. 삭제 전 확인 다이얼로그 필수.
+- **localStorage 복구**: `JSON.parse` 실패 시 `try/catch`로 잡아 빈 상태로 초기화. 사용자에게 오류 토스트 표시.
+- **체중 기록 수정**: S3(입력·조회·삭제)에 통합. WeightEntryForm을 추가/수정 모드로 공유.
+- **UI 폴리시**: S3 완료 후 병렬 진행 가능 (S7 블록 불필요).
 
 ### 라우팅
 
@@ -91,9 +101,10 @@ type WeightEntry = {
 ## Testing Decisions
 
 - 좋은 테스트는 구현 세부사항이 아니라 외부 동작(입력 → 출력)만 검증한다.
-- **CatStore**: 단위 테스트 — `addCat`, `deleteWeightEntry` 등 스토어 로직이 올바르게 상태를 변경하는지 검증
-- **WeightChart**: 주어진 데이터로 그래프가 올바른 데이터 포인트를 렌더링하는지 검증
-- **WeightEntryForm**: 유효하지 않은 입력(음수 체중, 미래 날짜 등) 처리 검증
+- **CatStore**: 단위 테스트 — `addCat`, `deleteCat`(cascade 포함), `addWeightEntry`, `updateWeightEntry`, `deleteWeightEntry` 상태 변화 검증. localStorage는 `vitest`의 `vi.stubGlobal`로 mock.
+- **WeightChart**: Recharts DOM 직접 검증 어려움 → 컴포넌트에 전달되는 `data` prop 값이 올바른지 단위 테스트. DOM assertion 최소화.
+- **WeightEntryForm**: 유효성 검사(체중 ≤ 0 거부, 소수점 1자리 반올림) 동작 검증.
+- **localStorage 복구**: 손상된 JSON 주입 시 앱이 빈 상태로 초기화되는지 검증.
 
 ## Out of Scope
 
