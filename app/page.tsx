@@ -18,7 +18,7 @@ export default function Home() {
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">🐾 냥이 체중 기록</h1>
-          <p className="text-sm text-gray-400 mt-0.5">우리 고양이들의 건강을 기록해요</p>
+          <p className="text-sm text-gray-500 mt-0.5">우리 고양이들의 건강을 기록해요</p>
         </div>
         <button
           onClick={() => setShowAdd(true)}

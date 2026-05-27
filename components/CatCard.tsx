@@ -51,21 +51,23 @@ export default function CatCard({ cat, entries, onEdit, onDelete }: Props) {
               <span className="text-base font-normal text-gray-400 ml-1">kg</span>
             </span>
             {diff !== null && (
-              <span
-                className={`text-sm font-medium pb-1 ${
-                  diff > 0 ? "text-red-400" : diff < 0 ? "text-blue-400" : "text-gray-400"
-                }`}
-              >
-                {diff > 0 ? "+" : ""}
-                {diff.toFixed(1)} kg
-              </span>
+              <div className="flex flex-col pb-1">
+                <span
+                  className={`text-sm font-semibold leading-tight ${
+                    diff > 0 ? "text-red-400" : diff < 0 ? "text-blue-400" : "text-gray-400"
+                  }`}
+                >
+                  {diff > 0 ? "↑" : diff < 0 ? "↓" : "—"} {Math.abs(diff).toFixed(1)} kg
+                </span>
+                <span className="text-[10px] text-gray-400 leading-tight">이전 대비</span>
+              </div>
             )}
           </div>
         ) : (
-          <p className="text-sm text-gray-400">아직 기록이 없어요</p>
+          <p className="text-sm text-gray-500">아직 기록이 없어요</p>
         )}
         {cat.targetWeight && (
-          <p className="text-xs text-gray-400 mt-1">목표: {cat.targetWeight} kg</p>
+          <p className="text-xs text-gray-500 mt-1">목표: {cat.targetWeight} kg</p>
         )}
       </Link>
     </div>

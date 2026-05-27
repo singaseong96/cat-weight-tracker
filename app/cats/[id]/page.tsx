@@ -80,13 +80,16 @@ export default function CatDetailPage() {
                       {entry.weight} kg
                     </span>
                     {diff !== null && (
-                      <span
-                        className={`text-xs pb-0.5 font-medium ${
-                          diff > 0 ? "text-red-400" : diff < 0 ? "text-blue-400" : "text-gray-400"
-                        }`}
-                      >
-                        {diff > 0 ? "+" : ""}{diff.toFixed(1)}
-                      </span>
+                      <div className="flex flex-col pb-0.5">
+                        <span
+                          className={`text-xs font-semibold leading-tight ${
+                            diff > 0 ? "text-red-400" : diff < 0 ? "text-blue-400" : "text-gray-400"
+                          }`}
+                        >
+                          {diff > 0 ? "↑" : diff < 0 ? "↓" : "—"} {Math.abs(diff).toFixed(1)}
+                        </span>
+                        <span className="text-[10px] text-gray-400 leading-tight">이전 대비</span>
+                      </div>
                     )}
                   </div>
                 </div>
